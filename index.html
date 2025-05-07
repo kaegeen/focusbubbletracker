@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Focus Bubble Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    canvas { display: block; margin: auto; background: #f3f4f6; }
+  </style>
+</head>
+<body class="p-6 bg-gray-100 min-h-screen flex flex-col items-center gap-6">
+
+  <h1 class="text-2xl font-bold">Focus Bubble Tracker</h1>
+
+  <div class="flex flex-col items-center gap-4">
+    <button onclick="startFocus()" class="px-4 py-2 bg-blue-500 text-white rounded">Start Focus Burst</button>
+    <div id="status" class="text-lg font-medium">No active session</div>
+    <canvas id="bubbleCanvas" width="400" height="400"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('bubbleCanvas');
+    const ctx = canvas.getContext('2d');
+    const status = document.getElementById('status');
+
+    let bubbles = [];
+    let startTime = null;
+    let focusInterval = null;
+
+    function startFocus() {
+      startTime = Date.now();
+      status.textContent = "Focusing...";
+
+      focusInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000); // seconds
+        if (elapsed % 5 === 0) {
+          bubbles.push({ x: Math.random() * 400, y: Math.random() * 400, r: 5, growth: 1 });
+        }
+      }, 1000);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let b of bubbles) {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(59,130,246,0.3)';
+        ctx.fill();
+        b.r += b.growth * 0.2;
+      }
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
